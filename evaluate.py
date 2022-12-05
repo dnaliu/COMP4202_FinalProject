@@ -15,6 +15,9 @@ from math import *
 from scipy.stats import norm
 from sklearn.metrics import r2_score
 
+import numpy as np
+from scipy import stats
+
 import pathlib
 
 #import detect from detect
@@ -115,49 +118,67 @@ def getElevation(txt, index):
 
     return camera_h + bottom_height + camera_dem_ft * ft_to_m
 
+    
+
 
 def evaluate():
     measurement_df = pd.DataFrame(columns=column_names)
     undetected_file = f = open("undetected.txt", "w")
 
+
+    paper_df = pd.read_csv(os.path.join(paper_dir, 'measurements.csv'))  
     #dataframe stuff
-    for idx, txt in enumerate(detected_texts[0:]):
-        paper_txt = paper_dir + "\\" + pathlib.Path(txt).stem + ".txt"
+    for idx, txt in enumerate(detected_texts):
+        paper_txt = paper_dir + "/" + pathlib.Path(txt).stem + ".txt"
         image_name = os.path.basename(txt.replace(".txt", ".jpg"))
 
 
-        if(not os.path.exists(paper_txt)):
-            continue
-        
-        elevation = getElevation(txt, 1)
 
-        if(elevation is None):
-            undetected_file.write(image_name)
-            continue
+        if(image_name in set(paper_df['image'])): 
+            elevation = getElevation(txt, 1)
 
-
-        basename = os.path.basename(txt)
-        EC_id = int(basename.split("_")[0])
-        EC_FFE_m = EC_df.loc[EC_id]['FFE_ft'] * ft_to_m
+            if(elevation is None or elevation < 0):
+                undetected_file.write(image_name + '\n')
+                continue
 
 
-        error = abs(elevation - EC_FFE_m)
+            basename = os.path.basename(txt)
+            EC_id = int(basename.split("_")[0])
+            EC_FFE_m = EC_df.loc[EC_id]['FFE_ft'] * ft_to_m
 
-        current_row = len(measurement_df)
-        measurement_df.at[current_row, 'image'] = image_name
-        measurement_df.at[current_row, 'EC_id']    = EC_id
-        measurement_df.at[current_row, 'FFE_gsv_m'] = elevation
-        measurement_df.at[current_row, 'EC_FFE_m'] = EC_FFE_m
-        measurement_df.at[current_row, 'error_m']  = error
+
+            error = abs(elevation - EC_FFE_m)
+
+            current_row = len(measurement_df)
+            measurement_df.at[current_row, 'image'] = image_name
+            measurement_df.at[current_row, 'EC_id']    = EC_id
+            measurement_df.at[current_row, 'FFE_gsv_m'] = elevation
+            measurement_df.at[current_row, 'EC_FFE_m'] = EC_FFE_m
+            measurement_df.at[current_row, 'error_m']  = error
 
     measure_file = os.path.join(doors_dir, 'measurements.csv')
     measurement_df.to_csv(measure_file, index=False)
     undetected_file.close()
 
+def compare_errors(filter_outliers= True):
+    df = pd.read_csv(os.path.join(doors_dir, 'measurements.csv'))  
+    paper_df = pd.read_csv(os.path.join(paper_dir, 'measurements.csv'))  
 
+
+    df = df[(np.abs(stats.zscore(df['error_m'])) < 3)]
+    paper_df = paper_df[(np.abs(stats.zscore(paper_df['error_m'])) < 3)]
+
+    df = df[df['error_m'] < 1]
+    paper_df = paper_df[paper_df['error_m'] < 1]
+
+    return [f"Our Mean Error: {df['error_m'].mean()}\nPaper's Mean Error: {paper_df['error_m'].mean()}",
+            f"Our Median Error: {df['error_m'].median()}\nPaper's Median Error: {paper_df['error_m'].median()}"]
 
 if __name__ == '__main__':
     evaluate()
+    for el in compare_errors():
+        print(el)
+    
    
 
         
