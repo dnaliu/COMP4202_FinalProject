@@ -11,4 +11,4 @@ The image of the door, and its corresponding text file will be stored at /doors
 Run the following command to determine the lowest door elevation:
   - python evaluate.py
 
-The result will be stored in measurement.csv file. All images with no doors will be stored in undetected.txt
+The result will be stored in measurement.csv file at /doors. All images with no doors will be stored in undetected.txt in the base directory.
