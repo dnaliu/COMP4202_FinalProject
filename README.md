@@ -3,7 +3,7 @@ Comp 4202 Final Project - Lowest Floor elevation
 
 Note: The project is currently set up to run on 5 sample data
 
-##Project dependancies setup##:
+**Project dependancies setup**:
 1. Ensure proper python version: 3.7+
 2. And the most updated version of pip.
 3. Run: pip install requirements.txt
