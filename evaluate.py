@@ -8,8 +8,8 @@ from math import *
 from scipy import stats
 import pathlib
 
-basepath = pathlib.Path(__file__).parent.resolve()
 
+basepath = pathlib.Path(__file__).parent.resolve()
 doors_dir = str(basepath) + "/doors"
 paper_dir = str(basepath) + "/paper_doors"
 detected_texts = glob.glob(os.path.join(doors_dir, "*.txt"))
@@ -22,7 +22,6 @@ EC_df = EC_df.set_index("ID")
 avg_door_h = 2.03
 ft_to_m = 0.3048
 fov_h = math.pi/6
-
 
 column_names = ["image", "EC_id", "FFE_gsv_m","EC_FFE_m","error_m"]
 
@@ -45,22 +44,16 @@ def process_detected(object_fields):
         
     return max(doorData, key=doorData.get)
 
-def cartesian_to_spherical(col, row, fov_h, height, width):
-
+def get_altitude_angles(col, row, fov_horizontal, height, width):
     col = col - width/2
     row = height/2 - row
-
-    fov_v = atan((height * tan((fov_h/2))/width))*2
-
-    r = (width/2)/tan(fov_h/2)
+    r = (width/2)/math.tan(fov_horizontal/2)
     s = sqrt(col**2 + r**2)
-
-    theta = atan(row/s)
+    theta = math.atan(row/s)
 
     return theta
 
 def getElevation(txt, index):
-
     #read file
     f = open(txt, 'r')
     lines = [line.replace(" \n", "") for line in f.readlines()]
@@ -92,8 +85,8 @@ def getElevation(txt, index):
     bottom_row = image_h * (y + h/2)
     col = image_w * x
 
-    bottom_angle = cartesian_to_spherical(col, bottom_row, fov_h, image_h, image_w)
-    top_angle = cartesian_to_spherical(col, top_row, fov_h, image_h, image_w)
+    bottom_angle = get_altitude_angles(col, bottom_row, fov_h, image_h, image_w)
+    top_angle = get_altitude_angles(col, top_row, fov_h, image_h, image_w)
 
        
     distance = avg_door_h * cos(top_angle) * cos(bottom_angle) / sin(top_angle - bottom_angle)
@@ -101,13 +94,10 @@ def getElevation(txt, index):
 
     return camera_h + bottom_height + camera_dem_ft * ft_to_m
 
-    
-
 
 def evaluate():
     measurement_df = pd.DataFrame(columns=column_names)
     undetected_file = f = open("undetected.txt", "w")
-
 
     paper_df = pd.read_csv(os.path.join(paper_dir, 'measurements.csv'))  
     #dataframe stuff
@@ -146,7 +136,6 @@ def evaluate():
 def compare_errors(filter_outliers= True):
     df = pd.read_csv(os.path.join(doors_dir, 'measurements.csv'))  
     paper_df = pd.read_csv(os.path.join(paper_dir, 'measurements.csv'))  
-
 
     df = df[(np.abs(stats.zscore(df['error_m'])) < 3)]
     paper_df = paper_df[(np.abs(stats.zscore(paper_df['error_m'])) < 3)]
