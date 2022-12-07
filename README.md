@@ -8,7 +8,7 @@ Note: The project is currently set up to run on 5 sample data
 2. And the most updated version of pip.
 3. Run: pip install requirements.txt
 4. Go the the drive: https://drive.google.com/drive/folders/1DdgDFNHDaJ0TPHCFzcYnLigQ-u3aNamD?usp=sharing
-5. Download the weight file found in the weight_file folder named and put into the base directory of the project: door_final.pt
+5. Download the weight file found in the weight_file folder named door_final.pt and put into the base directory of the project: door_final.pt
 
 **RUN ON SAMPLE DATA**
 1. Run the following command to detect doors at /inference/images folder:
