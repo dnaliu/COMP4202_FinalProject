@@ -1,29 +1,12 @@
-import matplotlib.pylab as plt
 import math
-import pandas as pd
 import numpy as np
 import os
 import glob
-import glob
-import os
-import math
 from PIL import Image
-from tqdm import tqdm
 import pandas as pd
-import math
 from math import *
-from scipy.stats import norm
-from sklearn.metrics import r2_score
-
-import numpy as np
 from scipy import stats
-
 import pathlib
-
-#import detect from detect
-
-import matplotlib.ticker as mtick
-from matplotlib.ticker import PercentFormatter
 
 basepath = pathlib.Path(__file__).parent.resolve()
 
