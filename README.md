@@ -10,7 +10,7 @@ Note: The project is currently set up to run on 5 sample data
 4. Go the the drive: https://drive.google.com/drive/folders/1DdgDFNHDaJ0TPHCFzcYnLigQ-u3aNamD?usp=sharing
 5. Download the weight file found in the weight_file folder named and put into the base directory of the project: door_final.pt
 
-**RUN ON SAMPLE DATA*
+**RUN ON SAMPLE DATA**
 1. Run the following command to detect doors at /inference/images folder:
   - python runbatch.py
   The image of the door, and its corresponding text file will be stored at /doors
