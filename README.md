@@ -3,6 +3,12 @@ Comp 4202 Final Project - Lowest Floor elevation
 
 Instructions:
 
+Ensure proper python version: 3.7+
+And the most updated version of pip.
+
+Run:
+  - pip install requirements.txt
+
 Run the following command to detect doors at /inference/images folder:
   - python runbatch.py
   
